@@ -33,6 +33,25 @@ CREATE TABLE IF NOT EXISTS empleos (
   COLLATE=utf8mb4_unicode_ci
   COMMENT='Registros de ofertas de empleo';
 
+-- ── Tabla: users ───────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS users (
+    id         INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+    nombre     VARCHAR(100)    NOT NULL,
+    email      VARCHAR(150)    NOT NULL,
+    password   VARCHAR(255)    NOT NULL,
+    creado_en  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+    UNIQUE INDEX idx_email (email)
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
+
+-- Usuario por defecto: admin@empleo.com / admin123
+-- Contraseña por defecto: admin123
+INSERT INTO users (nombre, email, password) VALUES
+('Administrador', 'admin@empleo.com', '$2y$12$0Z08q27DrmTuHLfI2BCZmeTtsXeyeX8GFkvzW.CReRCYUD5F1/CS.');
+
 -- ── Datos de ejemplo ────────────────────────────────────────────
 INSERT INTO empleos (id, nombre, categoria, area_trabajo, empresa, nivel, sueldo, funciones, cargo_jefe)
 VALUES
