@@ -5,6 +5,7 @@ use App\Application\Empleo\UpdateEmpleo\UpdateEmpleoHandler;
 use App\Application\Empleo\DeleteEmpleo\DeleteEmpleoHandler;
 use App\Application\Empleo\GetEmpleo\GetEmpleoHandler;
 use App\Application\Empleo\ListEmpleos\ListEmpleosHandler;
+use App\Infrastructure\Http\Controller\Auth\AuthController;
 use App\Infrastructure\Http\Controller\Empleo\EmpleoController;
 use App\Infrastructure\Persistence\MySQL\MySQLEmpleoRepository;
 
@@ -23,4 +24,6 @@ $empleoController = new EmpleoController(
     $listEmpleosHandler
 );
 
-return compact('empleoController');
+$authController = new AuthController();
+
+return compact('empleoController', 'authController');

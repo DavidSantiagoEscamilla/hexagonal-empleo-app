@@ -1,11 +1,16 @@
 <?php declare(strict_types=1);
 
+use App\Infrastructure\Http\Controller\Auth\AuthController;
 use App\Infrastructure\Http\Controller\Empleo\EmpleoController;
 
 function route(string $uri, string $method, array $container): void {
     $empleoController = $container['empleoController'];
+    $authController   = $container['authController'];
 
     $routes = [
+        ['GET',  '/login',              [$authController,  'showLogin']],
+        ['POST', '/login',              [$authController,  'login']],
+        ['GET',  '/logout',             [$authController,  'logout']],
         ['GET',  '/empleos',            [$empleoController, 'index']],
         ['GET',  '/empleos/crear',      [$empleoController, 'create']],
         ['POST', '/empleos/guardar',    [$empleoController, 'store']],
@@ -13,7 +18,7 @@ function route(string $uri, string $method, array $container): void {
         ['POST', '/empleos/actualizar', [$empleoController, 'update']],
         ['GET',  '/empleos/ver',        [$empleoController, 'show']],
         ['POST', '/empleos/eliminar',   [$empleoController, 'delete']],
-        ['GET',  '/',                   fn() => header('Location: /empleos')],
+        ['GET',  '/',                   fn() => header('Location: /login')],
     ];
 
     foreach ($routes as [$routeMethod, $routePath, $handler]) {

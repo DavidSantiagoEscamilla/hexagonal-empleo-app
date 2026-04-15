@@ -14,7 +14,9 @@
     <div class="navbar__links">
         <a href="/empleos" class="<?= str_starts_with($_SERVER['REQUEST_URI'], '/empleos') ? 'active' : '' ?>">Empleos</a>
         <?php if (!empty($_SESSION['user_id'])): ?>
-            <a href="/perfil">Mi perfil</a>
+            <span style="font-size:.82rem;color:var(--muted)">
+                <?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>
+            </span>
             <a href="/logout">Salir</a>
         <?php else: ?>
             <a href="/login">Iniciar sesión</a>
