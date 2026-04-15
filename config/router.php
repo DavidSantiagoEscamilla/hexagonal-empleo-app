@@ -2,12 +2,7 @@
 
 use App\Infrastructure\Http\Controller\Empleo\EmpleoController;
 
-/**
- * Simple front-controller router.
- * Maps [METHOD, path] → [controller, action].
- */
 function route(string $uri, string $method, array $container): void {
-    /** @var EmpleoController $empleoController */
     $empleoController = $container['empleoController'];
 
     $routes = [
@@ -18,8 +13,6 @@ function route(string $uri, string $method, array $container): void {
         ['POST', '/empleos/actualizar', [$empleoController, 'update']],
         ['GET',  '/empleos/ver',        [$empleoController, 'show']],
         ['POST', '/empleos/eliminar',   [$empleoController, 'delete']],
-
-        // Root → redirect
         ['GET',  '/',                   fn() => header('Location: /empleos')],
     ];
 
