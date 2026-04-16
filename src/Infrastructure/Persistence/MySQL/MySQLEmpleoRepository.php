@@ -47,20 +47,25 @@ final class MySQLEmpleoRepository implements EmpleoRepository {
                         (:id, :nombre, :categoria, :area_trabajo, :empresa, :nivel, :sueldo, :funciones, :cargo_jefe, :creado_en, :actualizado_en)';
         }
 
+        $params = [
+            ':id'             => $data['id'],
+            ':nombre'         => $data['nombre'],
+            ':categoria'      => $data['categoria'],
+            ':area_trabajo'   => $data['area_trabajo'],
+            ':empresa'        => $data['empresa'],
+            ':nivel'          => $data['nivel'],
+            ':sueldo'         => $data['sueldo'],
+            ':funciones'      => $data['funciones'],
+            ':cargo_jefe'     => $data['cargo_jefe'],
+            ':actualizado_en' => $data['actualizado_en'],
+        ];
+
+        if ((int)$row['cnt'] === 0) {
+            $params[':creado_en'] = $data['creado_en'];
+        }
+
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            ':id'            => $data['id'],
-            ':nombre'        => $data['nombre'],
-            ':categoria'     => $data['categoria'],
-            ':area_trabajo'  => $data['area_trabajo'],
-            ':empresa'       => $data['empresa'],
-            ':nivel'         => $data['nivel'],
-            ':sueldo'        => $data['sueldo'],
-            ':funciones'     => $data['funciones'],
-            ':cargo_jefe'    => $data['cargo_jefe'],
-            ':creado_en'     => $data['creado_en'],
-            ':actualizado_en'=> $data['actualizado_en'],
-        ]);
+        $stmt->execute($params);
     }
 
     public function findById(EmpleoId $id): ?Empleo {
