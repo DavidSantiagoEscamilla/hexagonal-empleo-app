@@ -14,9 +14,10 @@ siguiendo la metodología de las guías de aprendizaje.
 4. [Instalación](#instalación)
 5. [Configuración](#configuración)
 6. [Base de datos](#base-de-datos)
-7. [Uso](#uso)
-8. [Pruebas unitarias](#pruebas-unitarias)
-9. [Flujo de commits (Git)](#flujo-de-commits-git)
+7. [Autenticación](#autenticación)
+8. [Uso](#uso)
+9. [Pruebas unitarias](#pruebas-unitarias)
+10. [Flujo de commits (Git)](#flujo-de-commits-git)
 
 ---
 
@@ -71,11 +72,13 @@ empleo-app/
 │       │   └── MySQLEmpleoRepository.php     ← ADAPTADOR
 │       ├── Http/Controller/
 │       │   ├── BaseController.php
+│       │   ├── Auth/AuthController.php
 │       │   └── Empleo/EmpleoController.php
 │       └── View/
 │           ├── assets/css/app.css
 │           └── templates/
 │               ├── layout/{header,footer}.php
+│               ├── auth/login.php
 │               └── empleo/{index,form,show}.php
 ├── config/
 │   ├── database.php
@@ -123,11 +126,11 @@ composer install
 cp .env.example .env
 # → Editar .env con tus credenciales de MySQL
 
-# 4. Crear la base de datos
-mysql -u root -p < database/schema.sql
+# 4. Crear la base de datos y usuario por defecto
+mysql -u root < database/schema.sql
 
-# 5. Apuntar el DocumentRoot de Apache a /public
-#    O en Laragon: colocar el proyecto en C:/laragon/www/
+# 5. Iniciar el servidor de desarrollo
+php -S localhost:8000 -t public public/router.php
 ```
 
 ---
@@ -149,7 +152,9 @@ APP_URL=http://localhost/empleo-app/public
 
 ## Base de datos
 
-La tabla `empleos` tiene la siguiente estructura:
+El schema incluye dos tablas:
+
+### Tabla `empleos`
 
 | Campo          | Tipo          | Descripción                        |
 |----------------|---------------|------------------------------------|
@@ -165,12 +170,50 @@ La tabla `empleos` tiene la siguiente estructura:
 | `creado_en`    | DATETIME      | Fecha de creación                  |
 | `actualizado_en`| DATETIME     | Última modificación                |
 
+### Tabla `users`
+
+| Campo       | Tipo         | Descripción                     |
+|-------------|--------------|---------------------------------|
+| `id`        | INT UNSIGNED | Autoincremental                 |
+| `nombre`    | VARCHAR(100) | Nombre del usuario              |
+| `email`     | VARCHAR(150) | Correo (único)                  |
+| `password`  | VARCHAR(255) | Hash bcrypt                     |
+| `creado_en` | DATETIME     | Fecha de registro               |
+
+---
+
+## Autenticación
+
+La aplicación usa sesiones PHP con contraseñas hasheadas en bcrypt.
+
+### Credenciales por defecto
+
+| Campo    | Valor             |
+|----------|-------------------|
+| Correo   | `admin@empleo.com` |
+| Contraseña | `admin123`      |
+
+### Rutas de autenticación
+
+| URL       | Método | Acción                              |
+|-----------|--------|-------------------------------------|
+| `/login`  | GET    | Muestra el formulario de login      |
+| `/login`  | POST   | Valida credenciales e inicia sesión |
+| `/logout` | GET    | Cierra la sesión y redirige a login |
+
+> Para agregar más usuarios, inserta una fila en la tabla `users` con la contraseña hasheada:
+> ```sql
+> INSERT INTO users (nombre, email, password)
+> VALUES ('Nuevo Usuario', 'usuario@empleo.com', PASSWORD_HASH('tu_contraseña'));
+> ```
+> O desde PHP: `password_hash('tu_contraseña', PASSWORD_BCRYPT)`
+
 ---
 
 ## Uso
 
-| URL                        | Método | Acción                     |
-|----------------------------|--------|----------------------------|
+| URL                        | Método | Acción                                     |
+|----------------------------|--------|--------------------------------------------|
 | `/empleos`                 | GET    | Listar empleos (con búsqueda y paginación) |
 | `/empleos/crear`           | GET    | Formulario de creación     |
 | `/empleos/guardar`         | POST   | Guardar nuevo empleo       |
